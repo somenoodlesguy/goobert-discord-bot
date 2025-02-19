@@ -5,7 +5,7 @@ import fs from "fs";
 if (!fs.existsSync("db.json"))
     fs.writeFileSync("db.json", "{}");
 
-const db = JSON.parse(fs.readFileSync("db.json").toString(0))
+const db = JSON.parse(fs.readFileSync("db.json").toString())
 
 function syncDB() {
     fs.writeFileSync("db.json", db)
