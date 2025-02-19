@@ -1,6 +1,8 @@
 import {Client, IntentsBitField} from "discord.js"
 import "dotenv/config"
 
+const pancakeEmoji = "<:pancake:1333523925748945018>"
+
 const bot = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -29,11 +31,16 @@ bot.on("interactionCreate", (interaction) => {
             for (let i = 0; i < length; i++) {
                 grr.push(Math.random() > 0.5 ? "R" : "r");
             }
-            interaction.reply(grr.join(""))
+            interaction.reply(grr.join(""));
             break;
         case "dice":
-            interaction.reply(`you rolled a ${Math.floor((Math.random() * 6) + 1)}`)
+            interaction.reply(`you rolled a ${Math.floor((Math.random() * 6) + 1)}`);
             break;
+        case "work":
+            interaction.reply(`you earned 0${pancakeEmoji}. you now have 0${pancakeEmoji}`);
+            break;
+        case "bal":
+            interaction.reply(`you have 0${pancakeEmoji}`)
     }
 })
 

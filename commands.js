@@ -17,6 +17,14 @@ const commands = [
     {
         name: "dice",
         description: "roll los dice"
+    },
+    {
+        name: "work",
+        description: "get pancakes"
+    },
+    {
+        name: "bal",
+        description: "see how many pancakes you have"
     }
 ]
 
