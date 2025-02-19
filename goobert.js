@@ -1,5 +1,51 @@
-import {Client, IntentsBitField} from "discord.js"
+import {Client, IntentsBitField, REST, Routes} from "discord.js"
 import "dotenv/config"
+const commands = [
+    {
+        name: "goobert",
+        description: "goobert"
+    },
+    {
+        name: "miau",
+        description: "watch the miau as it explodes"
+    },
+    {
+        name: "grrr",
+        description: "grrr"
+    },
+    {
+        name: "dice",
+        description: "roll los dice"
+    },
+    {
+        name: "work",
+        description: "get pancakes (cooldown of 30 seconds)"
+    },
+    {
+        name: "bal",
+        description: "see how many pancakes you have"
+    },
+    {
+        name: "shop",
+        description: "see what items you can buy with your pancakes"
+    }
+]
+
+const rest = new REST({ version: "10" }).setToken(process.env.BOT_TOKEN);
+
+(async () => {
+    try {
+        console.log("we gonna slash command")
+        await rest.put(
+            Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+            {body: commands}
+        )
+        console.log("yippee slash commands real")
+    } catch (error) {
+        console.log("yikes")
+        console.error(error)
+    }
+})();
 
 const pancakeEmoji = "<:pancake:1333523925748945018>"
 
@@ -37,10 +83,14 @@ bot.on("interactionCreate", (interaction) => {
             interaction.reply(`you rolled a ${Math.floor((Math.random() * 6) + 1)}`);
             break;
         case "work":
-            interaction.reply(`you earned 0${pancakeEmoji}. you now have 0${pancakeEmoji}`);
+            const earned = Math.floor(Math.random() * 75) + 25;
+            interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have 0${pancakeEmoji}`);
             break;
         case "bal":
-            interaction.reply(`you have 0${pancakeEmoji}`)
+            interaction.reply(`you have 0${pancakeEmoji}`);
+            break;
+        case "shop":
+            interaction.reply("not implementingsd the yet")
     }
 })
 
