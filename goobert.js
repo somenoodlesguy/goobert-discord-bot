@@ -1,5 +1,18 @@
 import {Client, IntentsBitField, REST, Routes} from "discord.js"
 import "dotenv/config"
+import fs from "fs";
+
+if (!fs.existsSync("db.json"))
+    fs.writeFileSync("db.json", "{}");
+
+const db = JSON.parse(fs.readFileSync("db.json").toString(0))
+
+function syncDB() {
+    fs.writeFileSync("db.json", db)
+}
+
+//NOTE - btw i could like put commands in their own files for organization
+
 const commands = [
     {
         name: "goobert",
@@ -19,7 +32,7 @@ const commands = [
     },
     {
         name: "work",
-        description: "get pancakes (cooldown of 30 seconds)"
+        description: "get pancakes (cooldown of 5 minutes)"
     },
     {
         name: "bal",
@@ -64,6 +77,13 @@ bot.on("ready", (c) => {
 
 bot.on("interactionCreate", (interaction) => {
     if (!interaction.isChatInputCommand()) {return};
+    if (!db[`${interaction.user.id}`]) {
+        db[`${interaction.user.id}`] = {
+            balance: 0,
+            cooldownUntil: 0
+        }
+        syncDB();
+    }
     switch (interaction.commandName) {
         case "goobert":
             interaction.reply("goobert.");
@@ -83,14 +103,22 @@ bot.on("interactionCreate", (interaction) => {
             interaction.reply(`you rolled a ${Math.floor((Math.random() * 6) + 1)}`);
             break;
         case "work":
+            if (Number(new Date()) / 1000 < db[`${interaction.user.id}`].cooldownUntil)
+                return interaction.reply("you cant work yet you dingus")
+            let bal = db[`${interaction.user.id}`].balance
             const earned = Math.floor(Math.random() * 75) + 25;
-            interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have 0${pancakeEmoji}`);
+            bal += earned
+            interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have ${bal}${pancakeEmoji}`);
+            db[`${interaction.user.id}`].balance = bal
+            db[`${interaction.user.id}`].cooldownUntil = Number(new Date()) / 1000 + (60 * 5); // 5 mins
+            syncDB()
             break;
         case "bal":
-            interaction.reply(`you have 0${pancakeEmoji}`);
+            interaction.reply(`you have ${db[`${interaction.user.id}`].balance}${pancakeEmoji}`);
             break;
         case "shop":
             interaction.reply("not implementingsd the yet")
+            break;
     }
 })
 
