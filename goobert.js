@@ -1,4 +1,4 @@
-import {Client, IntentsBitField, REST, Routes} from "discord.js"
+import {Client, IntentsBitField, MessageFlags, REST, Routes} from "discord.js"
 import "dotenv/config"
 import fs from "fs";
 
@@ -104,7 +104,7 @@ bot.on("interactionCreate", (interaction) => {
             break;
         case "work":
             if ((Date.now() / 1000) < db[`${interaction.user.id}`].cooldownUntil)
-                return interaction.reply(`you cant work yet you dingus. try again <t:${Math.floor(db[interaction.user.id].cooldownUntil)}:R>`)
+                return interaction.reply({"content": `you cant work yet you dingus. try again <t:${Math.floor(db[interaction.user.id].cooldownUntil)}:R>`, "flags": MessageFlags.Ephemeral})
             let bal = db[`${interaction.user.id}`].balance
             const earned = Math.floor(Math.random() * 75) + 25;
             bal += earned
