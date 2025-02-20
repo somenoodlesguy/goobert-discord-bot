@@ -1,4 +1,4 @@
-import {Client, IntentsBitField, MessageFlags, REST, Routes} from "discord.js"
+import {ApplicationCommandOptionType, Client, IntentsBitField, MessageFlags, REST, Routes} from "discord.js"
 import "dotenv/config"
 import fs from "fs";
 
@@ -41,6 +41,11 @@ const commands = [
     {
         name: "shop",
         description: "see what items you can buy with your pancakes"
+    },
+    {
+        name: "soggyroulette",
+        description: "will you be sogged? or will you be dry? (1/2 chance of winning)",
+        options: [{"name": "bet", type: ApplicationCommandOptionType.Integer, description: "how many pancakes you want to bet", required: true}]
     }
 ]
 
@@ -118,6 +123,25 @@ bot.on("interactionCreate", (interaction) => {
             break;
         case "shop":
             interaction.reply("not implementingsd the yet")
+            break;
+        case "soggyroulette":
+            const bet = interaction.options.get("bet").value
+            let currentbal = db[interaction.user.id].balance
+            if (bet < 100) {
+                return interaction.reply(`sorry but your bet is too low, minimum is 100${pancakeEmoji}`)
+            }
+            if (bet > currentbal) {
+                return interaction.reply("you do NOT have that much")
+            }
+            const win = (Math.random() > 0.5)
+            currentbal += (win ? (bet) : (-1 * bet))
+            db[interaction.user.id].balance = currentbal
+            syncDB()
+            if (win) {
+                interaction.reply(`your're dry!!! you got ${bet * 2}${pancakeEmoji}`)
+            } else {
+                interaction.reply(`you've been sogged. you lost ${bet}${pancakeEmoji}`)
+            }
             break;
     }
 })
