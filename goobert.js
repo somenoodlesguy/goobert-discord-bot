@@ -8,7 +8,7 @@ if (!fs.existsSync("db.json"))
 const db = JSON.parse(fs.readFileSync("db.json").toString())
 
 function syncDB() {
-    fs.writeFileSync("db.json", db)
+    fs.writeFileSync("db.json", JSON.stringify(db))
 }
 
 //NOTE - btw i could like put commands in their own files for organization
