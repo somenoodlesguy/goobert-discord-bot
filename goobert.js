@@ -103,8 +103,8 @@ bot.on("interactionCreate", (interaction) => {
             interaction.reply(`you rolled a ${Math.floor((Math.random() * 6) + 1)}`);
             break;
         case "work":
-            if (Number(new Date()) / 1000 < db[`${interaction.user.id}`].cooldownUntil)
-                return interaction.reply("you cant work yet you dingus")
+            if ((Date.now() / 1000) < db[`${interaction.user.id}`].cooldownUntil)
+                return interaction.reply(`you cant work yet you dingus. try again <t:${Math.floor(db[interaction.user.id].cooldownUntil)}:R>`)
             let bal = db[`${interaction.user.id}`].balance
             const earned = Math.floor(Math.random() * 75) + 25;
             bal += earned
