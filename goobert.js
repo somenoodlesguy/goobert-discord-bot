@@ -45,7 +45,12 @@ const commands = [
     {
         name: "soggyroulette",
         description: "will you be sogged? or will you be dry? (1/2 chance of winning)",
-        options: [{"name": "bet", type: ApplicationCommandOptionType.Integer, description: "how many pancakes you want to bet", required: true}]
+        options: [{name: "bet", type: ApplicationCommandOptionType.Integer, description: "how many pancakes you want to bet", required: true}]
+    },
+    {
+        name: "count",
+        description: "count upward",
+        options: [{name: "number", type: ApplicationCommandOptionType.Integer, description: "the number", required: true}]
     }
 ]
 
@@ -142,6 +147,18 @@ bot.on("interactionCreate", (interaction) => {
             } else {
                 interaction.reply(`you've been sogged. you lost ${bet}${pancakeEmoji}`)
             }
+            break;
+        case "count":
+            const n = interaction.options.get("number").value
+            if (!db.count) {db.count = 0}
+            if (n === db.count + 1) {
+                db.count = n
+                interaction.reply(`the number has been incremented to ${n}`)
+            } else {
+                db.count = 0
+                interaction.reply("you DOOFUS. you DINGUS. you GOOBER. the count has been reset to 0")
+            }
+            syncDB()
             break;
     }
 })
