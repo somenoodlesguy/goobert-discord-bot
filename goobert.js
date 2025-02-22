@@ -143,9 +143,9 @@ bot.on("interactionCreate", (interaction) => {
             db[interaction.user.id].balance = currentbal
             syncDB()
             if (win) {
-                interaction.reply(`your're dry!!! you got ${bet * 2}${pancakeEmoji}`)
+                interaction.reply(`<:dry:1342865787135721472> your're dry!!! you got ${bet * 2}${pancakeEmoji}`)
             } else {
-                interaction.reply(`you've been sogged. you lost ${bet}${pancakeEmoji}`)
+                interaction.reply(`<:sog:1342865784602628127> you've been sogged. you lost ${bet}${pancakeEmoji}`)
             }
             break;
         case "count":
