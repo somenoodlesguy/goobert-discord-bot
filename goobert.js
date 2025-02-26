@@ -96,9 +96,13 @@ bot.on("interactionCreate", (interaction) => {
     if (!db[`${interaction.user.id}`]) {
         db[`${interaction.user.id}`] = {
             balance: 0,
-            cooldownUntil: 0
+            cooldownUntil: 0,
+            boughtItems: []
         }
         syncDB();
+    }
+    if (!db[interaction.user.id].boughtItems) {
+        db[interaction.user.id].boughtItems = []
     }
     switch (interaction.commandName) {
         case "goobert":
@@ -182,9 +186,6 @@ bot.on("interactionCreate", (interaction) => {
             }
             if (db[interaction.user.id].balance < item.price) {
                 return interaction.reply(`sorry ${interaction.user.displayName}, i cant give credit! come back when you're a little, ***MMM***, richer!`)
-            }
-            if (!db[interaction.user.id].boughtItems) {
-                db[interaction.user.id].boughtItems = []
             }
             if (db[interaction.user.id].boughtItems.includes(item.name)) {
                 return interaction.reply("you already have that")
