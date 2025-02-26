@@ -1,4 +1,4 @@
-import {ApplicationCommandOptionType, Client, IntentsBitField, MessageFlags, REST, Routes} from "discord.js"
+import {ApplicationCommandOptionType, Client, EmbedBuilder, IntentsBitField, MessageFlags, REST, Routes} from "discord.js"
 import "dotenv/config"
 import fs from "fs";
 
@@ -6,6 +6,7 @@ if (!fs.existsSync("db.json"))
     fs.writeFileSync("db.json", "{}");
 
 const db = JSON.parse(fs.readFileSync("db.json").toString())
+const shop = JSON.parse(fs.readFileSync("shop.json").toString())
 
 function syncDB() {
     fs.writeFileSync("db.json", JSON.stringify(db))
@@ -51,6 +52,11 @@ const commands = [
         name: "count",
         description: "count upward",
         options: [{name: "number", type: ApplicationCommandOptionType.Integer, description: "the number", required: true}]
+    },
+    {
+        name: "buy",
+        description: "buy items",
+        options: [{name: "item", type: ApplicationCommandOptionType.String, description: "what you want to buy", required: true}]
     }
 ]
 
@@ -117,17 +123,18 @@ bot.on("interactionCreate", (interaction) => {
                 return interaction.reply({"content": `you cant work yet you dingus. try again <t:${Math.floor(db[interaction.user.id].cooldownUntil)}:R>`, "flags": MessageFlags.Ephemeral})
             let bal = db[`${interaction.user.id}`].balance
             const earned = Math.floor(Math.random() * 75) + 25;
-            bal += earned
-            interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have ${bal}${pancakeEmoji}`);
+            bal += earned + (db[interaction.user.id].boughtItems.includes("slungus pet") ? 50 : 0)
+            if (db[interaction.user.id].boughtItems.includes("slungus pet")) {
+                interaction.reply(`you earned ${earned}${pancakeEmoji}. (+ 50${pancakeEmoji} thanks to your slungus pet)\nyou now have ${bal}${pancakeEmoji}`);
+            } else {
+                interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have ${bal}${pancakeEmoji}`);
+            }
             db[`${interaction.user.id}`].balance = bal
             db[`${interaction.user.id}`].cooldownUntil = Number(new Date()) / 1000 + (60 * 5); // 5 mins
             syncDB()
             break;
         case "bal":
             interaction.reply(`you have ${db[`${interaction.user.id}`].balance}${pancakeEmoji}`);
-            break;
-        case "shop":
-            interaction.reply("not implementingsd the yet")
             break;
         case "soggyroulette":
             const bet = interaction.options.get("bet").value
@@ -158,6 +165,39 @@ bot.on("interactionCreate", (interaction) => {
                 db.count = 0
                 interaction.reply("you DOOFUS. you DINGUS. you GOOBER. the count has been reset to 0")
             }
+            syncDB()
+            break;
+        case "shop":
+            const embed = new EmbedBuilder()
+                .setTitle("the goobert shop")
+                .setDescription("buy cool items")
+                .setColor(0x47ff7e)
+                .addFields(...shop.items)
+            interaction.reply({ embeds: [embed] })
+            break;
+        case "buy":
+            const item = shop.items.find((x) => x.name === interaction.options.get("item").value)
+            if (!item) {
+                return interaction.reply("what the heck is that")
+            }
+            if (db[interaction.user.id].balance < item.price) {
+                return interaction.reply(`sorry ${interaction.user.displayName}, i cant give credit! come back when you're a little, ***MMM***, richer!`)
+            }
+            if (!db[interaction.user.id].boughtItems) {
+                db[interaction.user.id].boughtItems = []
+            }
+            if (db[interaction.user.id].boughtItems.includes(item.name)) {
+                return interaction.reply("you already have that")
+            }
+            db[interaction.user.id].boughtItems.push(item.name)
+            db[interaction.user.id].balance -= item.price
+            const buyEmbed = new EmbedBuilder()
+                .setTitle("success")
+                .setColor(0x47ff7e)
+                .setDescription(`you got the ${item.name}!`)
+            interaction.reply({embeds: [
+                buyEmbed
+            ]})
             syncDB()
             break;
     }

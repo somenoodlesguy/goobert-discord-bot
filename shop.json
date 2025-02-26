@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "name": "slungus pet",
+            "value": "helps out with working and gives you more pancakes\ncost: 500",
+            "price": 500
+        },
+        {
+            "name": "fishing license",
+            "value": "allows you to fish\ncost: 1200",
+            "price": 1200
+        }
+    ]
+}
