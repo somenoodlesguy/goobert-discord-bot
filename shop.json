@@ -14,6 +14,12 @@
             "name": "an english delicacy",
             "value": "\"An English delicacy!!:flag_gb::coffee:\" (it has no purpose)\ncost: 10000",
             "price": 10000
+        },
+        {
+            "name": "slungus armor",
+            "value": "armor for your slungus",
+            "price": 2000,
+            "require": "slungus pet"
         }
     ]
 }

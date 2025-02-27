@@ -126,12 +126,17 @@ bot.on("interactionCreate", (interaction) => {
             if ((Date.now() / 1000) < db[`${interaction.user.id}`].cooldownUntil)
                 return interaction.reply({"content": `you cant work yet you dingus. try again <t:${Math.floor(db[interaction.user.id].cooldownUntil)}:R>`, "flags": MessageFlags.Ephemeral})
             let bal = db[`${interaction.user.id}`].balance
-            const earned = Math.floor(Math.random() * 75) + 25;
-            bal += earned + (db[interaction.user.id].boughtItems.includes("slungus pet") ? 50 : 0)
+            let earned = Math.floor(Math.random() * 75) + 25;
+            const origEarned = earned;
+            if (db[interaction.user.id].boughtItems.includes("slungus pet"))
+                earned += 50;
+            if (db[interaction.user.id].boughtItems.includes("slungus armor"))
+                earned *= 2;
+            bal += earned
             if (db[interaction.user.id].boughtItems.includes("slungus pet")) {
-                interaction.reply(`you earned ${earned}${pancakeEmoji}. (+ 50${pancakeEmoji} thanks to your slungus pet)\nyou now have ${bal}${pancakeEmoji}`);
+                interaction.reply(`you earned ${origEarned}${pancakeEmoji}. (+ ${earned - origEarned}${pancakeEmoji} thanks to your items)\nyou now have ${bal}${pancakeEmoji}`);
             } else {
-                interaction.reply(`you earned ${earned}${pancakeEmoji}. you now have ${bal}${pancakeEmoji}`);
+                interaction.reply(`you earned ${origEarned}${pancakeEmoji}. you now have ${bal}${pancakeEmoji}`);
             }
             db[`${interaction.user.id}`].balance = bal
             db[`${interaction.user.id}`].cooldownUntil = Number(new Date()) / 1000 + (60 * 5); // 5 mins
@@ -183,6 +188,9 @@ bot.on("interactionCreate", (interaction) => {
             const item = shop.items.find((x) => x.name === interaction.options.get("item").value)
             if (!item) {
                 return interaction.reply("what the heck is that")
+            }
+            if (item.require && !db[interaction.user.id].boughtItems.includes(item.require)) {
+                return interaction.reply(`you also need ${item.require} to buy this`)
             }
             if (db[interaction.user.id].balance < item.price) {
                 return interaction.reply(`sorry ${interaction.user.displayName}, i cant give credit! come back when you're a little, ***MMM***, richer!`)
