@@ -116,11 +116,7 @@ bot.on("interactionCreate", (interaction) => {
             interaction.reply("https://tenor.com/view/miau-hd-adobe-after-effects-glass-breaking-preset-gif-752576862881430143");
             break;
         case "grrr":
-            const grr = [Math.random() > 0.5 ? "G" : "g"];
-            const length = Math.floor(Math.random() * (28) + 3);
-            for (let i = 0; i < length; i++) {
-                grr.push(Math.random() > 0.5 ? "R" : "r");
-            }
+            const grr = [Math.random() > 0.5 ? "G" : "g", ...new Array(Math.floor(Math.random() * (28) + 3)).fill(0).map(_ => Math.random() > 0.5 ? "R" : "r")];
             interaction.reply(grr.join(""));
             break;
         case "dice":
