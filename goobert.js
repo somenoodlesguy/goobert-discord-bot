@@ -57,7 +57,11 @@ const commands = [
         name: "buy",
         description: "buy items",
         options: [{name: "item", type: ApplicationCommandOptionType.String, description: "what you want to buy", required: true}]
-    }
+    },
+    {
+        name: "leaderboard",
+        description: "see who to murder at night to become the richest person"
+    },
 ]
 
 const rest = new REST({ version: "10" }).setToken(process.env.BOT_TOKEN);
@@ -112,11 +116,7 @@ bot.on("interactionCreate", (interaction) => {
             interaction.reply("https://tenor.com/view/miau-hd-adobe-after-effects-glass-breaking-preset-gif-752576862881430143");
             break;
         case "grrr":
-            const grr = [Math.random() > 0.5 ? "G" : "g"];
-            const length = Math.floor(Math.random() * (28) + 3);
-            for (let i = 0; i < length; i++) {
-                grr.push(Math.random() > 0.5 ? "R" : "r");
-            }
+            const grr = [Math.random() > 0.5 ? "G" : "g", ...new Array(Math.floor(Math.random() * (28) + 3)).fill(0).map(_ => Math.random() > 0.5 ? "R" : "r")];
             interaction.reply(grr.join(""));
             break;
         case "dice":
@@ -200,6 +200,32 @@ bot.on("interactionCreate", (interaction) => {
                 buyEmbed
             ]})
             syncDB()
+            break;
+        case "leaderboard":
+            /** @type {Record<string, number>} */
+            let money_leaderboard = {}
+            for (const key in db) {
+                if (Object.hasOwnProperty.call(db, key)) {
+                    const element = db[key];
+                    money_leaderboard[key] = element.balance
+                }
+            }
+            money_leaderboard = Object.fromEntries(
+                Object.entries(money_leaderboard)
+                    .sort(([_, a], [__, b]) => b - a)
+            )
+            let user_place = (Object.keys(money_leaderboard).indexOf(interaction.user.id)) + 1
+            money_leaderboard = Object.entries(money_leaderboard)
+                .map((p, index) => `<@${p[0]}> - ${p[1]}`);
+            money_leaderboard = money_leaderboard.slice(0, 10)
+            const lbEmbed = new EmbedBuilder()
+                .setTitle('leaderboard')
+                .setColor(0x47ff7e)
+                .setDescription(money_leaderboard.join("\n"))
+                .setFooter({
+                    text: `You are №${user_place}`
+                })
+            interaction.reply({embeds: [lbEmbed]})
             break;
     }
 })
