@@ -184,6 +184,9 @@ bot.on("interactionCreate", (interaction) => {
             if (!item) {
                 return interaction.reply("what the heck is that")
             }
+            if (item.require && db[interaction.user.id].boughtItems.includes(item.require)) {
+                return interaction.reply(`you also need ${item.require} to buy this`)
+            }
             if (db[interaction.user.id].balance < item.price) {
                 return interaction.reply(`sorry ${interaction.user.displayName}, i cant give credit! come back when you're a little, ***MMM***, richer!`)
             }
