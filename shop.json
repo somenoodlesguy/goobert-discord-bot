@@ -9,6 +9,11 @@
             "name": "fishing license",
             "value": "allows you to fish\ncost: 1200",
             "price": 1200
+        },
+        {
+            "name": "an english delicacy",
+            "value": "\"An English delicacy!!:flag_gb::coffee:\" (it has no purpose)",
+            "price": 10000
         }
     ]
 }
